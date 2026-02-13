@@ -1,0 +1,9 @@
+bin/
+obj/
+*.pdb
+*.dll
+*.exe
+*.user
+*.suo
+.vs/
+*.DotSettings.user
