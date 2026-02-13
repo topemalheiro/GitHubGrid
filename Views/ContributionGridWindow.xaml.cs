@@ -45,6 +45,8 @@ public partial class ContributionGridWindow : Window
             {
                 var day = week.Days[dayIdx];
 
+                var rowIdx = (int)day.Date.DayOfWeek;
+
                 var rect = new Rectangle
                 {
                     Width = CellSize,
@@ -55,8 +57,12 @@ public partial class ContributionGridWindow : Window
                     ToolTip = FormatTooltip(day)
                 };
 
+                ToolTipService.SetInitialShowDelay(rect, 50);
+                ToolTipService.SetBetweenShowDelay(rect, 0);
+                ToolTipService.SetShowDuration(rect, 30000);
+
                 Canvas.SetLeft(rect, weekIdx * CellStride);
-                Canvas.SetTop(rect, dayIdx * CellStride);
+                Canvas.SetTop(rect, rowIdx * CellStride);
                 ContributionCanvas.Children.Add(rect);
             }
         }

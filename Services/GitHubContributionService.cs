@@ -7,7 +7,7 @@ namespace GitHubGrid.Services;
 
 public sealed partial class GitHubContributionService
 {
-    private const string GraphQLQuery = @"query($username:String!,$from:DateTime!,$to:DateTime!){user(login:$username){contributionsCollection(from:$from,to:$to){contributionCalendar{totalContributions weeks{contributionDays{contributionCount date contributionLevel}}}}}}";
+    private const string GraphQLQuery = @"query($username:String!){user(login:$username){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{contributionCount date contributionLevel}}}}}}";
 
     [GeneratedRegex(@"^[a-zA-Z0-9](?:[a-zA-Z0-9\-]*[a-zA-Z0-9])?$")]
     private static partial Regex ValidGitHubUsername();
@@ -30,10 +30,7 @@ public sealed partial class GitHubContributionService
         if (!ValidGitHubUsername().IsMatch(username))
             throw new ArgumentException("Invalid GitHub username format.", nameof(username));
 
-        var to = DateTime.UtcNow;
-        var from = to.AddYears(-1);
-
-        var args = $"api graphql -f query=\"{GraphQLQuery}\" -F username=\"{username}\" -F from=\"{from:yyyy-MM-ddTHH:mm:ssZ}\" -F to=\"{to:yyyy-MM-ddTHH:mm:ssZ}\"";
+        var args = $"api graphql -f query=\"{GraphQLQuery}\" -F username=\"{username}\"";
 
         var (success, output) = await RunGhAsync(args);
         if (!success)
