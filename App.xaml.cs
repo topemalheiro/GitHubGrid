@@ -44,9 +44,9 @@ public partial class App : Application
         }
     }
 
-    private void ToggleGridWindow()
+    private async void ToggleGridWindow()
     {
-        if (_gridWindow is null) return;
+        if (_gridWindow is null || _viewModel is null) return;
 
         if (_gridWindow.IsVisible)
         {
@@ -57,6 +57,7 @@ public partial class App : Application
             _gridWindow.Show();
             _gridWindow.PositionNearTray();
             _gridWindow.Activate();
+            await _viewModel.RefreshAsync();
         }
     }
 
