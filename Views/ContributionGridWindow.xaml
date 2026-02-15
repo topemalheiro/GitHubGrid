@@ -57,25 +57,40 @@
                 <Canvas x:Name="ContributionCanvas"/>
             </StackPanel>
 
-            <!-- Footer: Less/More legend -->
-            <StackPanel Grid.Row="3"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Margin="0,10,0,0">
-                <TextBlock Text="Less"
-                           FontSize="10"
+            <!-- Footer: Today + Legend -->
+            <Grid Grid.Row="3" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Today's contribution (left) -->
+                <TextBlock x:Name="TodayContributionText"
+                           Grid.Column="0"
+                           FontSize="11"
                            FontFamily="Segoe UI"
                            Foreground="{DynamicResource SecondaryTextBrush}"
-                           VerticalAlignment="Center"
-                           Margin="0,0,4,0"/>
-                <Canvas x:Name="LegendCanvas" Width="74" Height="13"/>
-                <TextBlock Text="More"
-                           FontSize="10"
-                           FontFamily="Segoe UI"
-                           Foreground="{DynamicResource SecondaryTextBrush}"
-                           VerticalAlignment="Center"
-                           Margin="4,0,0,0"/>
-            </StackPanel>
+                           VerticalAlignment="Center"/>
+
+                <!-- Less/More legend (right) -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <TextBlock Text="Less"
+                               FontSize="10"
+                               FontFamily="Segoe UI"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,4,0"/>
+                    <Canvas x:Name="LegendCanvas" Width="74" Height="13"/>
+                    <TextBlock Text="More"
+                               FontSize="10"
+                               FontFamily="Segoe UI"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               VerticalAlignment="Center"
+                               Margin="4,0,0,0"/>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </Window>

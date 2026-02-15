@@ -30,6 +30,7 @@ public partial class ContributionGridWindow : Window
     {
         RenderContributionCells();
         RenderMonthLabels();
+        UpdateTodayContribution();
     }
 
     private void RenderContributionCells()
@@ -185,6 +186,29 @@ public partial class ContributionGridWindow : Window
         var workArea = SystemParameters.WorkArea;
         Left = workArea.Right - ActualWidth - 16;
         Top = workArea.Bottom - ActualHeight - 16;
+    }
+
+    private void UpdateTodayContribution()
+    {
+        var data = _viewModel.ContributionData;
+        if (data is null) return;
+
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var todayContribution = data.Weeks
+            .SelectMany(w => w.Days)
+            .FirstOrDefault(d => d.Date == today);
+
+        if (todayContribution is not null)
+        {
+            var count = todayContribution.ContributionCount;
+            TodayContributionText.Text = count == 0
+                ? "No contributions today"
+                : $"{count} contribution{(count == 1 ? "" : "s")} today";
+        }
+        else
+        {
+            TodayContributionText.Text = "";
+        }
     }
 
     private void Window_Deactivated(object? sender, EventArgs e)
