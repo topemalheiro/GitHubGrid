@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QSizePolicy,
     QSpacerItem,
+    QToolTip,
     QVBoxLayout,
     QWidget,
 )
@@ -117,10 +118,14 @@ class GridWidget(QWidget):
     def mouseMoveEvent(self, event):
         day = self._day_at(event.pos())
         if day:
-            self.setToolTip(_format_tooltip(day))
+            QToolTip.showText(self.mapToGlobal(event.pos()), _format_tooltip(day), self)
         else:
-            self.setToolTip("")
+            QToolTip.hideText()
         super().mouseMoveEvent(event)
+
+    def leaveEvent(self, event):
+        QToolTip.hideText()
+        super().leaveEvent(event)
 
     def paintEvent(self, event):
         if self._data is None:
@@ -230,7 +235,7 @@ class ContributionGridWindow(QWidget):
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint
             | Qt.WindowType.WindowStaysOnTopHint
-            | Qt.WindowType.Tool
+            | Qt.WindowType.Popup
         )
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose, False)
@@ -405,11 +410,4 @@ class ContributionGridWindow(QWidget):
         )
 
     def leaveEvent(self, event):
-        # Optional: hide on leave if desired
         pass
-
-    def changeEvent(self, event):
-        # Hide when window is deactivated
-        if event.type() == event.Type.WindowDeactivate:
-            self.hide()
-        super().changeEvent(event)

@@ -157,8 +157,6 @@ class GitHubGridApp:
             else:
                 self._position_window()
                 self._window.show()
-                self._window.raise_()
-                self._window.activateWindow()
                 self._on_refresh()
 
     def _position_window(self):
