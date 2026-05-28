@@ -2,6 +2,9 @@
 # Launcher script for GitHubGrid
 # Detects its own directory so it works from any install location.
 set -e
+
+# Force XWayland so window positioning works on KDE Wayland
+export QT_QPA_PLATFORM=xcb
 SCRIPT_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
 
 # Use the bundled venv if it exists, otherwise fall back to system python

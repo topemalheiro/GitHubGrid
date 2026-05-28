@@ -1,5 +1,9 @@
+import os
 import sys
 import random
+
+# Force XWayland so window positioning works on KDE Wayland
+os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
 
 from PyQt6.QtCore import QTimer, Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QAction, QIcon, QImage, QPainter, QColor, QPixmap, QCursor
@@ -156,7 +160,7 @@ class GitHubGridApp:
                 self._window.hide()
             else:
                 self._window.show()
-                # XWayland needs window mapped + data loaded before move works
+                # XWayland needs window mapped before move() works reliably
                 QTimer.singleShot(50, self._position_window)
                 self._on_refresh()
 
