@@ -161,15 +161,15 @@ class GitHubGridApp:
                 self._on_refresh()
 
     def _position_window(self):
-        cursor_pos = QCursor.pos()
-        screen = QApplication.screenAt(cursor_pos) or QApplication.primaryScreen()
+        # Always use primary screen (where taskbar/tray lives)
+        screen = QApplication.primaryScreen()
         sg = screen.availableGeometry() if screen else None
         if not sg:
             return
 
-        # Bottom-right with padding so it doesn't hug the edge
-        x = sg.right() - self._window.width() - 80
-        y = sg.bottom() - self._window.height() - 80
+        # Bottom-right with generous padding
+        x = sg.right() - self._window.width() - 60
+        y = sg.bottom() - self._window.height() - 160
 
         # Clamp to screen bounds
         x = max(sg.left(), min(x, sg.right() - self._window.width()))
