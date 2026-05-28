@@ -161,34 +161,27 @@ class GitHubGridApp:
 
     def _position_window(self):
         tray_geo = self._tray_icon.geometry()
-        screen = QApplication.primaryScreen()
-        if screen:
-            sg = screen.availableGeometry()
-        else:
-            sg = None
+
+        # Use the screen where the cursor is (tray icon click location)
+        cursor_pos = QCursor.pos()
+        screen = QApplication.screenAt(cursor_pos) or QApplication.primaryScreen()
+        sg = screen.availableGeometry() if screen else None
 
         if tray_geo.isValid() and not tray_geo.isEmpty():
-            # Position above the tray icon
             x = tray_geo.center().x() - self._window.width() // 2
             y = tray_geo.top() - self._window.height() - 8
         elif sg:
-            # Fallback: bottom-right of primary screen
+            # Bottom-right of the screen where the cursor is
             x = sg.right() - self._window.width() - 16
             y = sg.bottom() - self._window.height() - 16
         else:
-            # Last resort: near cursor
-            cursor_pos = QCursor.pos()
             x = cursor_pos.x() - self._window.width() // 2
             y = cursor_pos.y() - self._window.height() - 8
-            screen = QApplication.screenAt(cursor_pos)
-            if screen:
-                sg = screen.availableGeometry()
 
         if sg:
             x = max(sg.left(), min(x, sg.right() - self._window.width()))
             y = max(sg.top(), min(y, sg.bottom() - self._window.height()))
 
-        # Use setGeometry instead of move — some Wayland compositors respect it better
         self._window.setGeometry(x, y, self._window.width(), self._window.height())
 
     def _quit(self):
