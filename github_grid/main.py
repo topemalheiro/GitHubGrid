@@ -155,8 +155,9 @@ class GitHubGridApp:
             if self._window.isVisible():
                 self._window.hide()
             else:
-                self._position_window()
                 self._window.show()
+                # Move after show — XWayland needs the window mapped first
+                QTimer.singleShot(10, self._position_window)
                 self._on_refresh()
 
     def _position_window(self):
