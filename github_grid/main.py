@@ -156,34 +156,28 @@ class GitHubGridApp:
                 self._window.hide()
             else:
                 self._window.show()
-                # Move after show — XWayland needs the window mapped first
-                QTimer.singleShot(10, self._position_window)
+                # XWayland needs window mapped + data loaded before move works
+                QTimer.singleShot(50, self._position_window)
                 self._on_refresh()
 
     def _position_window(self):
-        tray_geo = self._tray_icon.geometry()
-
-        # Use the screen where the cursor is (tray icon click location)
         cursor_pos = QCursor.pos()
         screen = QApplication.screenAt(cursor_pos) or QApplication.primaryScreen()
         sg = screen.availableGeometry() if screen else None
+        if not sg:
+            return
 
-        if tray_geo.isValid() and not tray_geo.isEmpty():
-            x = tray_geo.center().x() - self._window.width() // 2
-            y = tray_geo.top() - self._window.height() - 8
-        elif sg:
-            # Bottom-right of the screen where the cursor is
-            x = sg.right() - self._window.width() - 16
-            y = sg.bottom() - self._window.height() - 16
-        else:
-            x = cursor_pos.x() - self._window.width() // 2
-            y = cursor_pos.y() - self._window.height() - 8
+        # Force bottom-right of the screen where the cursor is
+        x = sg.right() - self._window.width() - 20
+        y = sg.bottom() - self._window.height() - 20
 
-        if sg:
-            x = max(sg.left(), min(x, sg.right() - self._window.width()))
-            y = max(sg.top(), min(y, sg.bottom() - self._window.height()))
+        # Clamp to screen bounds
+        x = max(sg.left(), min(x, sg.right() - self._window.width()))
+        y = max(sg.top(), min(y, sg.bottom() - self._window.height()))
 
-        self._window.setGeometry(x, y, self._window.width(), self._window.height())
+        self._window.move(x, y)
+        self._window.raise_()
+        self._window.activateWindow()
 
     def _quit(self):
         self._tray_icon.hide()
