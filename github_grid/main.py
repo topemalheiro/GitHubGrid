@@ -167,9 +167,9 @@ class GitHubGridApp:
         if not sg:
             return
 
-        # Force bottom-right of the screen where the cursor is
-        x = sg.right() - self._window.width() - 20
-        y = sg.bottom() - self._window.height() - 20
+        # Bottom-right with padding so it doesn't hug the edge
+        x = sg.right() - self._window.width() - 80
+        y = sg.bottom() - self._window.height() - 80
 
         # Clamp to screen bounds
         x = max(sg.left(), min(x, sg.right() - self._window.width()))
