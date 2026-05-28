@@ -7,3 +7,17 @@ obj/
 *.suo
 .vs/
 *.DotSettings.user
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+env/
+venv/
+
+# Generated desktop entry (created by install-desktop.sh)
+github-grid.desktop
+
+# Auto Claude data directory
+.auto-claude/

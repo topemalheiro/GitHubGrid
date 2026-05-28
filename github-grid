@@ -1,0 +1,14 @@
+#!/bin/bash
+# Launcher script for GitHubGrid
+# Detects its own directory so it works from any install location.
+set -e
+SCRIPT_DIR="$(cd "$(dirname "$(realpath "$0")")" && pwd)"
+
+# Use the bundled venv if it exists, otherwise fall back to system python
+if [ -d "$SCRIPT_DIR/.venv" ]; then
+    PYTHON="$SCRIPT_DIR/.venv/bin/python"
+else
+    PYTHON="python3"
+fi
+
+exec "$PYTHON" -m github_grid "$@"

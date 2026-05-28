@@ -1,0 +1,18 @@
+[Desktop Entry]
+Name=GitHubGrid
+Comment=GitHub contribution grid in your KDE system tray
+Exec=bash -c 'cd "@INSTALL_DIR@" && exec ./github-grid'
+Icon=@INSTALL_DIR@/github_grid/icon.png
+Type=Application
+Categories=Qt;KDE;Utility;Network;
+StartupNotify=false
+Terminal=false
+OnlyShowIn=KDE;
+X-KDE-AutostartScript=false
+
+Actions=SetupToken;
+
+[Desktop Action SetupToken]
+Name=Configure GitHub Token…
+Exec=bash -c 'cd "@INSTALL_DIR@" && exec konsole -e .venv/bin/python setup-token.py'
+Icon=preferences-system-login
