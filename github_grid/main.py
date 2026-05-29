@@ -200,9 +200,9 @@ class GitHubGridApp:
             self._window.hide()
         else:
             self._click_pos = QCursor.pos()
-            self._position_window()            # Set position before show to avoid center flash
             self._window.show()
-            QTimer.singleShot(50, self._position_window)  # Safety re-position after XWayland maps
+            # XWayland needs window mapped before move() works reliably
+            QTimer.singleShot(50, self._position_window)
             self._on_refresh()
 
     def _on_tray_activated(self, reason: QSystemTrayIcon.ActivationReason):
@@ -216,6 +216,11 @@ class GitHubGridApp:
         sg = screen.availableGeometry() if screen else None
         if not sg:
             return
+
+        # Tell Qt (and the Wayland compositor) which screen this window belongs to
+        wh = self._window.windowHandle()
+        if wh and wh.screen() != screen:
+            wh.setScreen(screen)
 
         # Bottom-right with generous padding
         x = sg.right() - self._window.width() - 60
