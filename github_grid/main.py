@@ -200,8 +200,9 @@ class GitHubGridApp:
             self._window.hide()
         else:
             self._click_pos = QCursor.pos()
+            self._position_window()            # Set position before show to avoid center flash
             self._window.show()
-            QTimer.singleShot(50, self._position_window)
+            QTimer.singleShot(50, self._position_window)  # Safety re-position after XWayland maps
             self._on_refresh()
 
     def _on_tray_activated(self, reason: QSystemTrayIcon.ActivationReason):
