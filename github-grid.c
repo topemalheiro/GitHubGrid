@@ -9,6 +9,6 @@ int main(void) {
         return 1;
     }
 
-    execl(python, "python", "-m", "github_grid", (char *)NULL);
+    execl(python, python, "-m", "github_grid", (char *)NULL);
     return 1;
 }
