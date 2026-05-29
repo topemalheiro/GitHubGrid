@@ -76,6 +76,7 @@ class GitHubGridApp:
         self._username = ""
         self._data: ContributionData | None = None
         self._current_worker: FetchWorker | None = None
+        self._click_pos = None
 
         self._window = ContributionGridWindow()
         self._window.refresh_btn.clicked.connect(self._on_refresh)
@@ -159,14 +160,16 @@ class GitHubGridApp:
             if self._window.isVisible():
                 self._window.hide()
             else:
+                # Remember where the user clicked so positioning uses that screen
+                self._click_pos = QCursor.pos()
                 self._window.show()
                 # XWayland needs window mapped before move() works reliably
                 QTimer.singleShot(50, self._position_window)
                 self._on_refresh()
 
     def _position_window(self):
-        # Screen-agnostic: use whichever screen the cursor is on
-        cursor_pos = QCursor.pos()
+        # Use the screen where the user originally clicked the tray icon
+        cursor_pos = self._click_pos or QCursor.pos()
         screen = QApplication.screenAt(cursor_pos) or QApplication.primaryScreen()
         sg = screen.availableGeometry() if screen else None
         if not sg:
