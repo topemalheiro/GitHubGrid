@@ -165,8 +165,9 @@ class GitHubGridApp:
                 self._on_refresh()
 
     def _position_window(self):
-        # Always use primary screen (where taskbar/tray lives)
-        screen = QApplication.primaryScreen()
+        # Screen-agnostic: use whichever screen the cursor is on
+        cursor_pos = QCursor.pos()
+        screen = QApplication.screenAt(cursor_pos) or QApplication.primaryScreen()
         sg = screen.availableGeometry() if screen else None
         if not sg:
             return
