@@ -5,7 +5,7 @@ import random
 # Force XWayland so window positioning works on KDE Wayland
 os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
 
-from PyQt6.QtCore import QTimer, Qt, QThread, pyqtSignal
+from PyQt6.QtCore import QTimer, Qt, QThread, pyqtSignal, QObject
 from PyQt6.QtGui import QAction, QIcon, QImage, QPainter, QColor, QPixmap, QCursor
 from PyQt6.QtNetwork import QLocalServer, QLocalSocket
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
@@ -67,7 +67,7 @@ class FetchWorker(QThread):
             self.finished.emit(None, str(e))
 
 
-class SingleInstanceGuard:
+class SingleInstanceGuard(QObject):
     """Prevent multiple tray instances. Second instance signals the first to show."""
 
     show_requested = pyqtSignal()
