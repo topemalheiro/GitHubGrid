@@ -5,9 +5,8 @@ import random
 # Force XWayland so window positioning works on KDE Wayland
 os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
 
-from PyQt6.QtCore import QTimer, Qt, QThread, pyqtSignal, QObject
+from PyQt6.QtCore import QTimer, Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QAction, QIcon, QImage, QPainter, QColor, QPixmap, QCursor
-from PyQt6.QtNetwork import QLocalServer, QLocalSocket
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
 
 from .grid_window import ContributionGridWindow
@@ -67,47 +66,9 @@ class FetchWorker(QThread):
             self.finished.emit(None, str(e))
 
 
-class SingleInstanceGuard(QObject):
-    """Prevent multiple tray instances. Second instance signals the first to show."""
-
-    show_requested = pyqtSignal()
-
-    def __init__(self, app_id: str):
-        super().__init__()
-        self._app_id = app_id
-        self._server: QLocalServer | None = None
-
-    def is_another_running(self) -> bool:
-        socket = QLocalSocket()
-        socket.connectToServer(self._app_id)
-        if socket.waitForConnected(500):
-            socket.write(b"show")
-            socket.flush()
-            socket.waitForBytesWritten(500)
-            socket.disconnectFromServer()
-            return True
-        return False
-
-    def listen(self):
-        self._server = QLocalServer()
-        self._server.newConnection.connect(self._on_new_connection)
-        QLocalServer.removeServer(self._app_id)
-        self._server.listen(self._app_id)
-
-    def _on_new_connection(self):
-        socket = self._server.nextPendingConnection()
-        if socket and socket.waitForReadyRead(500):
-            msg = socket.readAll().data().decode()
-            if msg == "show":
-                self.show_requested.emit()
-        if socket:
-            socket.disconnectFromServer()
-            socket.deleteLater()
-
-
 class GitHubGridApp:
-    def __init__(self, app=None):
-        self.app = app or QApplication(sys.argv)
+    def __init__(self):
+        self.app = QApplication(sys.argv)
         self.app.setQuitOnLastWindowClosed(False)
         self.app.setApplicationName("GitHubGrid")
         self.app.setApplicationDisplayName("GitHubGrid")
@@ -115,7 +76,6 @@ class GitHubGridApp:
         self._username = ""
         self._data: ContributionData | None = None
         self._current_worker: FetchWorker | None = None
-        self._click_pos = None
 
         self._window = ContributionGridWindow()
         self._window.refresh_btn.clicked.connect(self._on_refresh)
@@ -194,25 +154,19 @@ class GitHubGridApp:
         if self._window.isVisible():
             self._position_window()
 
-    def show_window(self):
-        """Called by second instance to show/raise the window."""
-        if self._window.isVisible():
-            self._window.hide()
-        else:
-            self._click_pos = QCursor.pos()
-            self._window.show()
-            # XWayland needs window mapped before move() works reliably
-            QTimer.singleShot(50, self._position_window)
-            self._on_refresh()
-
     def _on_tray_activated(self, reason: QSystemTrayIcon.ActivationReason):
         if reason == QSystemTrayIcon.ActivationReason.Trigger:
-            self.show_window()
+            if self._window.isVisible():
+                self._window.hide()
+            else:
+                self._window.show()
+                # XWayland needs window mapped + data loaded before move works
+                QTimer.singleShot(50, self._position_window)
+                self._on_refresh()
 
     def _position_window(self):
-        # Use the screen where the user originally clicked the tray icon
-        cursor_pos = self._click_pos or QCursor.pos()
-        screen = QApplication.screenAt(cursor_pos) or QApplication.primaryScreen()
+        # Always use primary screen (where taskbar/tray lives)
+        screen = QApplication.primaryScreen()
         sg = screen.availableGeometry() if screen else None
         if not sg:
             return
@@ -238,15 +192,5 @@ class GitHubGridApp:
 
 
 def main():
-    app = QApplication(sys.argv)
-
-    guard = SingleInstanceGuard("GitHubGridInstance")
-    if guard.is_another_running():
-        sys.exit(0)
-
-    guard.listen()
-
-    github_app = GitHubGridApp(app)
-    guard.show_requested.connect(github_app.show_window)
-
-    sys.exit(github_app.run())
+    app = GitHubGridApp()
+    sys.exit(app.run())
