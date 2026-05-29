@@ -200,6 +200,7 @@ class GitHubGridApp:
             self._window.hide()
         else:
             self._click_pos = QCursor.pos()
+            print(f"[DEBUG] click_pos={self._click_pos.x()},{self._click_pos.y()}", flush=True)
             self._window.show()
             # XWayland needs window mapped before move() works reliably
             QTimer.singleShot(50, self._position_window)
@@ -214,12 +215,15 @@ class GitHubGridApp:
         cursor_pos = self._click_pos or QCursor.pos()
         screen = QApplication.screenAt(cursor_pos) or QApplication.primaryScreen()
         sg = screen.availableGeometry() if screen else None
+        print(f"[DEBUG] screen={screen.name() if screen else None}, sg={sg}, window_size={self._window.width()}x{self._window.height()}", flush=True)
         if not sg:
             return
 
         # Tell Qt (and the Wayland compositor) which screen this window belongs to
         wh = self._window.windowHandle()
+        print(f"[DEBUG] window_handle={wh}, current_screen={wh.screen().name() if wh else None}", flush=True)
         if wh and wh.screen() != screen:
+            print(f"[DEBUG] setScreen({screen.name()})", flush=True)
             wh.setScreen(screen)
 
         # Bottom-right with generous padding
@@ -230,6 +234,7 @@ class GitHubGridApp:
         x = max(sg.left(), min(x, sg.right() - self._window.width()))
         y = max(sg.top(), min(y, sg.bottom() - self._window.height()))
 
+        print(f"[DEBUG] move({x},{y})", flush=True)
         self._window.move(x, y)
         self._window.raise_()
         self._window.activateWindow()
