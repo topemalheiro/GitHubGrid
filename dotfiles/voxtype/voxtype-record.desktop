@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=VoxType Record
+Comment=Toggle voice-to-text recording
+Exec=/usr/bin/voxtype record toggle
+Icon=audio-input-microphone
+Type=Application
+Terminal=false
