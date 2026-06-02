@@ -1,9 +1,9 @@
 [Desktop Entry]
 Name=GitHubGrid
 Comment=GitHub contribution grid in your KDE system tray
-Exec=/home/tope/github-grid/.venv/bin/python -m github_grid
-Path=/home/tope/Projects/OS Toolkit/GitHubGrid
-Icon=/home/tope/Projects/OS Toolkit/GitHubGrid/github_grid/icon.png
+Exec=/home/tope/Projects/OS-Toolkit/GitHubGrid/github-grid-bin
+Path=/home/tope/Projects/OS-Toolkit/GitHubGrid
+Icon=/home/tope/Projects/OS-Toolkit/GitHubGrid/github_grid/icon.png
 Type=Application
 Categories=Qt;KDE;Utility;Network;
 StartupNotify=false
@@ -15,5 +15,5 @@ Actions=SetupToken;
 
 [Desktop Action SetupToken]
 Name=Configure GitHub Token…
-Exec=konsole -e /home/tope/Projects/OS Toolkit/GitHubGrid/.venv/bin/python /home/tope/github-grid/setup-token.py
+Exec=konsole -e /home/tope/Projects/OS-Toolkit/GitHubGrid/.venv/bin/python /home/tope/Projects/OS-Toolkit/GitHubGrid/setup-token.py
 Icon=preferences-system-login

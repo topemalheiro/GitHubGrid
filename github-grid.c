@@ -2,8 +2,8 @@
 #include <stdlib.h>
 
 int main(void) {
-    const char *dir = "/home/tope/Projects/OS Toolkit/GitHubGrid";
-    const char *python = "/home/tope/github-grid/.venv/bin/python";
+    const char *dir = "/home/tope/Projects/OS-Toolkit/GitHubGrid";
+    const char *python = "/home/tope/Projects/OS-Toolkit/GitHubGrid/.venv/bin/python";
 
     if (chdir(dir) != 0) {
         return 1;
