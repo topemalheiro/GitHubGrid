@@ -27,9 +27,10 @@ class GitHubServiceError(Exception):
 
 
 def _run_gh(args: str, timeout: int = 30) -> tuple[bool, str]:
+    import shlex
     try:
         result = subprocess.run(
-            ["gh"] + args.split(),
+            ["gh"] + shlex.split(args),
             capture_output=True,
             text=True,
             timeout=timeout,
